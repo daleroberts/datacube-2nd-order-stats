@@ -4,4 +4,4 @@
 
 *Note: please do not release this code repository or details of the methodology to people outside of GA until the research paper is public. It is fine to release output products.*
 
-This [datacube-stats](https://github.com/GeoscienceAustralia/datacube-stats) plug-in generates outputs to robustly understand variation in the landscape. These results have been preliminarily published/presented at IGARS 2018 in [this](https://github.com/daleroberts/datacube-2nd-order-stats/raw/master/docs/IGARS2018-2ndOrderStats.pdf).
+This [datacube-stats](https://github.com/GeoscienceAustralia/datacube-stats) plug-in generates outputs to robustly understand variation in the landscape. These results have been preliminarily published/presented at IGARS 2018 in [this paper](https://github.com/daleroberts/datacube-2nd-order-stats/raw/master/docs/IGARS2018-2ndOrderStats.pdf).
