@@ -9,6 +9,7 @@ This [datacube-stats](https://github.com/GeoscienceAustralia/datacube-stats) plu
 ## Example Outputs
 
 <img src="https://github.com/daleroberts/datacube-2nd-order-stats/raw/master/docs/2ndorder-ternary.png" width="800">
+<img src="https://github.com/daleroberts/datacube-2nd-order-stats/raw/master/docs/2ndorder-braycurtis.png" width="800">
 
 ## Temporal Statistics
 
