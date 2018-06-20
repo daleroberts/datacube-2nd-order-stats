@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+
+import subprocess
+import yaml
+import sys
+import re
+import os
+
+def retile(tiles, sx=4, sy=4):
+    newtiles = []
+    for tile in tiles:
+        try:
+            i, j = re.split('\s+', tile, maxsplit=1)
+            i, j = int(i), int(j)
+        except ValueError:
+            raise ValueError('Error parsing "{}"'.format(tile))
+
+        for k in range(sx):
+            for l in range(sy):
+                newtiles.append('{} {}'.format(i*sx + k, j*sy + l))
+
+    return newtiles
+
+def checkfiles(path, sx=4, sy=4):
+    completed = []
+    for fn in os.scandir(path):
+        if fn.path.endswith('.tif'):
+            try:
+                match = re.search(r'(\-?\d+)_(\-?\d+)', fn.path)
+                tile = '{} {}'.format(*match.groups())
+                completed.append(tile)
+            except AttributeError:
+                pass
+
+    with open('tiles', 'r') as fd:
+        tiles = [line.strip() for line in fd.readlines()]
+    tiles = retile(tiles, sx, sy)
+
+    done = {}
+    for tile in tiles:
+        done[tile] = False
+
+    for tile in completed:
+        if tile in done:
+            done[tile] = True
+
+    remain = [x for x,b in done.items() if b is False] 
+
+    ntotal = len(done.keys())
+    nremain = len(remain)
+
+    return (nremain, ntotal, remain)
+
+with open('config.yaml', 'r') as fd:
+    config = yaml.load(fd)
+
+tilesize = config['storage']['tile_size']
+x, y = tilesize['x'], tilesize['y']
+sx, sy = int(100000/float(x)), int(100000/float(y))
+
+path = config['location']
+if not os.path.exists(path):
+    os.makedirs(path)
+
+nremain, ntotal, remain = checkfiles(path, sx, sy)
+
+print('# {} completed, {}/{} tiles remaining [{}]'.format(ntotal-nremain, nremain, ntotal, path))
+
+if nremain == 0:
+    sys.exit(1)

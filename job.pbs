@@ -1,0 +1,72 @@
+#!/bin/bash
+#PBS -N 2ndOrder
+#PBS -l ncpus=32,mem=2950GB,walltime=24:00:00,jobfs=10GB,wd
+#PBS -q megamem
+
+#OLD -l ncpus=28,mem=254GB,walltime=24:00:00,wd
+#OLD -q expressbw
+
+
+module load agdc-py3-env
+
+NJOBS=32
+NCPUS=32
+
+# Fail on any errors
+set -e
+
+# Generate fast code
+
+echo "Cythonizing code"
+cythonize model/fast.pyx
+
+echo "Compiling code"
+export NCI_GXX_ABI_WARNING=1
+module load gcc/6.2.0
+gcc -shared -pthread -fopenmp -fPIC -O3 -fno-strict-aliasing \
+	-I$(python3 -c 'import numpy; print(numpy.get_include())') \
+	$(python3-config --includes) -Wno-cpp model/fast.c \
+	-o model/fast.so
+
+if [ -z "$PBS_JOBID" ]; then
+	echo "Exiting as not running under PBS"
+	exit 1
+fi
+
+# Check status - exit if all tiles are complete
+
+./stat
+
+echo "Starting computations"
+
+INDEX=/short/v10/$USER/$PBS_JOBID
+NNODES=$(cat $PBS_NODEFILE | uniq | wc -l)
+JOBDIR=$PWD
+
+# Create tile index directory
+
+mkdir -p $INDEX
+function cleanup { rm -fr $INDEX; }
+trap cleanup EXIT
+
+# Retile and split work based on number of nodes
+
+./retile tiles > $PBS_JOBFS/tilesr
+NTILES=$(cat $PBS_JOBFS/tilesr | wc -l)
+NSPLIT=$(( ($NTILES + $NNODES - 1)/$NNODES ))
+sort -r -n $PBS_JOBFS/tilesr | split -l $NSPLIT - $INDEX/x
+
+# Distribute work
+
+TILES=($INDEX/x*)
+for i in $(seq 1 $NNODES); do
+  TILEINDEX=$(($i-1))
+  TILEFILE="${TILES[$TILEINDEX]}"
+  pbsdsh -n $(( $NCPUS*$i )) -- \
+  bash -l -c "\
+        module load parallel agdc-py3-env; cd $JOBDIR;\
+        parallel --wc -j$NJOBS --delay 5 --linebuffer --colsep ' ' \
+        -a $TILEFILE \"datacube-stats -v -C datacube.conf \
+	--tile-index {1} {2} config.yaml\"" &
+done;
+wait

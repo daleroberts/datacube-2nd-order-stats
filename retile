@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+import yaml
+import sys
+import re
+import os
+
+sx = 4
+sy = 4
+
+with open('config.yaml', 'r') as fd:
+    config = yaml.load(fd)
+
+tilesize = config['storage']['tile_size']
+x, y = tilesize['x'], tilesize['y']
+sx, sy = int(100000/float(x)), int(100000/float(y))
+
+path = config['location']
+template = config['output_products'][0]['file_path_template']
+
+if len(sys.argv) < 2:
+    print('Usage: {} inputfile'.format(sys.argv[0]))
+    sys.exit(1)
+
+with open(sys.argv[1], 'r') as fd:
+    for line in fd.readlines():
+        try:
+            i, j = re.split('\s+', line.strip(), maxsplit=1)
+            i, j = int(i), int(j)
+        except ValueError:
+            sys.stderr.write('Error parsing "{}"\n'.format(line.strip()))
+            sys.exit(1)
+
+        for k in range(sx):
+            for l in range(sy):
+                x, y = i*sx + k, j*sy + l
+                if not os.path.exists(os.path.join(path, template.format(x=x, y=y))):
+                    print('{} {}'.format(x,y))
