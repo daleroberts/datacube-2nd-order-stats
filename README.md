@@ -6,10 +6,11 @@
 
 This [datacube-stats](https://github.com/GeoscienceAustralia/datacube-stats) plug-in generates outputs to robustly understand variation in the landscape. These results have been preliminarily published/presented at IGARS 2018 in [this paper](https://github.com/daleroberts/datacube-2nd-order-stats/raw/master/docs/IGARS2018-2ndOrderStats.pdf).
 
+The core concept of our approach is to extend the classic concept of [median absolute deviation](https://en.wikipedia.org/wiki/Median_absolute_deviation) to the multidimensional case by replacing the absolute value in the definition by a vector distance. There are many possible choices for vector distances and we choose three that are structurally different. These are the [cosine distance](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.cosine.html), the [Euclidean distance](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.euclidean.html#scipy.spatial.distance.euclidean), and the [Bray-Curtis distance](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.braycurtis.html#scipy.spatial.distance.braycurtis).
+
 ## Example Outputs
 
-The `TernaryMAD` 3-band output demonstrates a rainbow opal-like coloring of a cropping area which means the 3 bands are uncorrelated (a highly desirable property). The three bands are high-dimensional versions of the median absolute deviation where the vector distance metrics are the [cosine distance](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.cosine.html), the [Euclidean distance](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.euclidean.html#scipy.spatial.distance.euclidean), and the [Bray-Curtis distance](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.braycurtis.html#scipy.spatial.distance.braycurtis).
-
+The `TernaryMAD` 3-band output demonstrates a rainbow opal-like coloring of a cropping area which means the 3 bands are uncorrelated (a highly desirable property). 
 <img src="https://github.com/daleroberts/datacube-2nd-order-stats/raw/master/docs/2ndorder-ternary.png" width="800">
 
 Visualising the `BrayCurtisDistanceMAD` over the Menindee lakes, Australia.
@@ -27,9 +28,6 @@ The following temporal statistics models are available:
  - `BrayCurtisDistanceMAD` (or `BCMAD`) generates a single-band output where the Bray-Curtis distance MAD is computed through time for every pixel.
 
  - `TernaryMAD` generates a 3-band output where the cosine distance MAD (Band 1), the Euclidean distance MAD (Band 2), the Bray-Curtis distance MAD (Band 3) is computed through time for every pixel.
-
-## Tasselled Cap
-
 
 ## Installation
 
