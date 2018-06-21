@@ -18,6 +18,16 @@ Visualising the `BrayCurtisDistanceMAD` over the Menindee lakes, Australia.
 
 ## Temporal Statistics
 
+The following temporal statistics models are available:
+
+ - `CosineDistanceMAD` (or `SMAD`) generates a single-band output where the cosine distance MAD is computed through time for every pixel.
+
+ - `EuclideanDistanceMAD` (or `EMAD`) generates a single-band output where the Euclidean distance MAD is computed through time for every pixel.
+
+ - `BrayCurtisDistanceMAD` (or `BCMAD`) generates a single-band output where the Bray-Curtis distance MAD is computed through time for every pixel.
+
+ - `TernaryMAD` generates a 3-band output where the cosine distance MAD (Band 1), the Euclidean distance MAD (Band 2), the Bray-Curtis distance MAD (Band 3) is computed through time for every pixel.
+
 ## Tasselled Cap
 
 
