@@ -46,3 +46,7 @@ Some additional tools are contained in this repository:
 
   - `stat` is a python script that gives information about how many of the output tiles have been generated so far. It is useful for checking
       the status of continental runs.
+
+## Testing
+
+The unittests for the package can be found in `model/test_.py`. You can use `pytest` in the root of the repository to run them.
