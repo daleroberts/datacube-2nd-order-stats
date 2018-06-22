@@ -42,8 +42,7 @@ def emad_core(floating [:, :, :, :] X, floating [:, :, :] gm, floating [:,:,:] r
                     total = 0.
                     for j in range(p):
                         value = X[row, col, j, t] - gm[row, col, j]
-                        if not isnan(value):
-                            total = total + value*value
+                        total = total + value*value
 
                     result[row, col, t] = sqrt(total)
             
@@ -128,7 +127,7 @@ def emad(floating [:, :, :, :] X, floating [:,:,:] gm, num_threads=None):
     
     emad_core(X, gm, result, num_threads=num_threads)
     
-    return np.median(result, axis=2)
+    return np.nanmedian(result, axis=2)
 
 
 def smad(floating [:, :, :, :] X, floating [:,:,:] gm, num_threads=None):
