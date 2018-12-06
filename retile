@@ -34,5 +34,5 @@ with open(sys.argv[1], 'r') as fd:
         for k in range(sx):
             for l in range(sy):
                 x, y = i*sx + k, j*sy + l
-                if not os.path.exists(os.path.join(path, template.format(x=x, y=y))):
-                    print('{} {}'.format(x,y))
+                #if not os.path.exists(os.path.join(path, template.format(x=x, y=y))):
+                print('{} {}'.format(x,y))

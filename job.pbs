@@ -1,16 +1,18 @@
 #!/bin/bash
 #PBS -N 2ndOrder
-#PBS -l ncpus=32,mem=2950GB,walltime=24:00:00,jobfs=10GB,wd
-#PBS -q megamem
+#PBS -l ncpus=7,mem=980GB,walltime=24:00:00,jobfs=50GB,wd -q hugemem
+#OLD -l ncpus=504,mem=4536GB,walltime=48:00:00,jobfs=10GB,wd -q normalbw
 
-#OLD -l ncpus=28,mem=254GB,walltime=24:00:00,wd
-#OLD -q expressbw
+NJOBS=7 # per node
 
+DEAENV='dea-env'
+DBCONF=${DBCONF:-'datacube.conf'}
+CONFIG=${CONFIG:-'config.yaml'}
 
-module load agdc-py3-env
+module load $DEAENV
 
-NJOBS=32
-NCPUS=32
+echo "database: ${DBCONF}"
+echo "config: ${CONFIG}"
 
 # Fail on any errors
 set -e
@@ -37,26 +39,24 @@ fi
 
 ./stat
 
-echo "Starting computations"
-
 INDEX=/short/v10/$USER/$PBS_JOBID
 NNODES=$(cat $PBS_NODEFILE | uniq | wc -l)
+NCPUS=$(cat $PBS_NODEFILE | grep $(hostname) | wc -l)
 JOBDIR=$PWD
 
-# Create tile index directory
+echo "Retiling"
 
 mkdir -p $INDEX
 function cleanup { rm -fr $INDEX; }
 trap cleanup EXIT
 
-# Retile and split work based on number of nodes
-
-./retile tiles > $PBS_JOBFS/tilesr
+./retile ${TILEFILE:-tiles} > $PBS_JOBFS/tilesr
 NTILES=$(cat $PBS_JOBFS/tilesr | wc -l)
 NSPLIT=$(( ($NTILES + $NNODES - 1)/$NNODES ))
 sort -r -n $PBS_JOBFS/tilesr | split -l $NSPLIT - $INDEX/x
+echo "ntiles: ${NTILES} nsplit: ${NSPLIT} nnodes: ${NNODES} njobs: ${NJOBS}/node"
 
-# Distribute work
+echo "Distributing work"
 
 TILES=($INDEX/x*)
 for i in $(seq 1 $NNODES); do
@@ -64,9 +64,10 @@ for i in $(seq 1 $NNODES); do
   TILEFILE="${TILES[$TILEINDEX]}"
   pbsdsh -n $(( $NCPUS*$i )) -- \
   bash -l -c "\
-        module load parallel agdc-py3-env; cd $JOBDIR;\
-        parallel --wc -j$NJOBS --delay 5 --linebuffer --colsep ' ' \
-        -a $TILEFILE \"datacube-stats -v -C datacube.conf \
-	--tile-index {1} {2} config.yaml\"" &
+        module load parallel $DEAENV; cd $JOBDIR;\
+        parallel --wc -j$NJOBS --delay 120 --linebuffer --colsep ' ' \
+	--resume-failed --joblog $PBS_JOBFS/log \
+        -a $TILEFILE \"datacube-stats -v -C $DBCONF \
+	--tile-index {1} {2} $CONFIG\"" &
 done;
 wait

@@ -1,40 +1,10 @@
-location: '/g/data/u46/users/dxr251/2nd-order-v1'
+location: '/g/data/u46/users/dxr251/mad-annual'
 
 output_products:
 
-  - name: cosine
-    statistic: external
-    file_path_template: 'cosine_{x}_{y}.tif'
-    statistic_args:
-        impl: model.CosineDistanceMAD
-        num_threads: 3
-    output_params:
-      zlib: True
-      fletcher32: True
-
-  - name: euclidean
-    statistic: external
-    file_path_template: 'euclidean_{x}_{y}.tif'
-    statistic_args:
-        impl: model.EuclideanDistanceMAD
-        num_threads: 3
-    output_params:
-      zlib: True
-      fletcher32: True
-
-  - name: braycurtis
-    statistic: external
-    file_path_template: 'braycurtis_{x}_{y}.tif'
-    statistic_args:
-        impl: model.BrayCurtisDistanceMAD
-        num_threads: 3
-    output_params:
-      zlib: True
-      fletcher32: True
-
   - name: ternary
     statistic: external
-    file_path_template: 'ternary_{x}_{y}.tif'
+    file_path_template: 'mad-{epoch_start:%Y%m%d}-{epoch_end:%Y%m%d}_{x}_{y}.tif'
     statistic_args:
         impl: model.TernaryMAD
         num_threads: 3
@@ -44,53 +14,11 @@ output_products:
 
 sources:
 
-#  - product: ls5_nbart_albers
-#    measurements: [blue, green, red, nir, swir1, swir2]
-#    group_by: solar_day
-#    masks:
-#      - product: ls5_pq_albers
-#        measurement: pixelquality
-#        group_by: solar_day
-#        fuse_func: datacube.helpers.ga_pq_fuser
-#        flags:
-#          contiguous: True
-#          cloud_acca: no_cloud
-#          cloud_fmask: no_cloud
-#          cloud_shadow_acca: no_cloud_shadow
-#          cloud_shadow_fmask: no_cloud_shadow
-#          blue_saturated: False
-#          green_saturated: False
-#          red_saturated: False
-#          nir_saturated: False
-#          swir1_saturated: False
-#          swir2_saturated: False
-#
-#  - product: ls7_nbart_albers
-#    measurements: [blue, green, red, nir, swir1, swir2]
-#    group_by: solar_day
-#    masks:
-#      - product: ls7_pq_albers
-#        measurement: pixelquality
-#        group_by: solar_day
-#        fuse_func: datacube.helpers.ga_pq_fuser
-#        flags:
-#          contiguous: True
-#          cloud_acca: no_cloud
-#          cloud_fmask: no_cloud
-#          cloud_shadow_acca: no_cloud_shadow
-#          cloud_shadow_fmask: no_cloud_shadow
-#          blue_saturated: False
-#          green_saturated: False
-#          red_saturated: False
-#          nir_saturated: False
-#          swir1_saturated: False
-#          swir2_saturated: False
-
-  - product: ls8_nbart_albers
+  - product: ls5_nbart_albers
     measurements: [blue, green, red, nir, swir1, swir2]
     group_by: solar_day
     masks:
-      - product: ls8_pq_albers
+      - product: ls5_pq_albers
         measurement: pixelquality
         group_by: solar_day
         fuse_func: datacube.helpers.ga_pq_fuser
@@ -107,17 +35,57 @@ sources:
           swir1_saturated: False
           swir2_saturated: False
 
+  - product: ls7_nbart_albers
+    measurements: [blue, green, red, nir, swir1, swir2]
+    group_by: solar_day
+    masks:
+      - product: ls7_pq_albers
+        measurement: pixelquality
+        group_by: solar_day
+        fuse_func: datacube.helpers.ga_pq_fuser
+        flags:
+          contiguous: True
+          cloud_acca: no_cloud
+          cloud_fmask: no_cloud
+          cloud_shadow_acca: no_cloud_shadow
+          cloud_shadow_fmask: no_cloud_shadow
+          blue_saturated: False
+          green_saturated: False
+          red_saturated: False
+          nir_saturated: False
+          swir1_saturated: False
+          swir2_saturated: False
+
+  - product: ls8_nbart_albers
+    measurements: [blue, green, red, nir, swir1, swir2]
+    group_by: solar_day
+    masks:
+      - product: ls8_pq_albers
+        measurement: pixelquality
+        group_by: solar_day
+        fuse_func: datacube.helpers.ga_pq_fuser
+        flags:
+          contiguous: True
+          cloud_fmask: no_cloud
+          blue_saturated: False
+          green_saturated: False
+          red_saturated: False
+          nir_saturated: False
+          swir1_saturated: False
+          swir2_saturated: False
+
 date_ranges:
-  start_date: 2000-01-01
+  start_date: 1980-01-01
   end_date: 2020-01-01
+  stats_duration: 1y
+  step_size: 1y
 
 storage:
-  driver: GeoTiff
-
+  driver: GeoTIFF
   crs: EPSG:3577
   tile_size:
-    x: 25000.0
-    y: 25000.0
+    x: 100000.0
+    y: 100000.0
   resolution:
     x: 25
     y: -25
