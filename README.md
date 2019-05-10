@@ -2,8 +2,6 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Release](https://img.shields.io/badge/Release-Private-ff69b4.svg)
 
-*Note: please do not release this code repository or details of the methodology to people outside of GA until the research paper is public. It is fine to release output products.*
-
 This [datacube-stats](https://github.com/GeoscienceAustralia/datacube-stats) plug-in generates outputs to robustly understand variation in the landscape. These results have been preliminarily published/presented at IGARS 2018 in [this paper](https://github.com/daleroberts/datacube-2nd-order-stats/raw/master/docs/IGARS2018-2ndOrderStats.pdf).
 
 The core concept of our approach is to extend the classic concept of [median absolute deviation](https://en.wikipedia.org/wiki/Median_absolute_deviation) to the multidimensional case by replacing the absolute value in the definition by a vector distance. There are many possible choices for vector distances and we choose three that are structurally different. These are the [cosine distance](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.cosine.html), the [Euclidean distance](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.euclidean.html#scipy.spatial.distance.euclidean), and the [Bray-Curtis distance](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.braycurtis.html#scipy.spatial.distance.braycurtis).
@@ -27,7 +25,8 @@ The following temporal statistics models are available:
 
  - `BrayCurtisDistanceMAD` (or `BCMAD`) generates a single-band output where the Bray-Curtis distance MAD is computed through time for every pixel.
 
- - `TernaryMAD` generates a 3-band output where the cosine distance MAD (Band 1), the Euclidean distance MAD (Band 2), the Bray-Curtis distance MAD (Band 3) is computed through time for every pixel.
+ - `TernaryMAD` generates a 3-band output where the cosine distance MAD (Band 1), the Euclidean distance MAD (Band 2), the Bray-Curtis distance MAD (Band 3) is computed through time for every pixel. For this output, the distances are transformed by -log(x).
+
 
 ## Installation
 
@@ -50,3 +49,10 @@ Some additional tools are contained in this repository:
 ## Testing
 
 The unittests for the package can be found in `model/test_.py`. You can use `pytest` in the root of the repository to run them.
+
+## References
+
+ - Roberts, D., Dunn, B., & Mueller, N. (2018, July). [Open Data Cube Products Using High-Dimensional Statistics of Time Series](https://ieeexplore.ieee.org/abstract/document/8518312). IEEE International Geoscience and Remote Sensing Symposium 2018. 8647-8650.
+
+ - Roberts, D., Mueller, N., & Mcintyre, A. (2017). [High-dimensional pixel composites from earth observation time series](https://ieeexplore.ieee.org/abstract/document/8004469). IEEE Transactions on Geoscience and Remote Sensing, 55(11), 6254-6264.
+

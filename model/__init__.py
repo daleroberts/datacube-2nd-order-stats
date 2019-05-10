@@ -162,15 +162,15 @@ class TernaryMAD(Statistic):
 
         LOG.info("Computing cosine distance MAD mosaic")
 
-        sdev = smad(data, gm, num_threads=self.num_threads)
+        sdev = -np.log(smad(data, gm, num_threads=self.num_threads))
 
         LOG.info("Computing Euclidean distance MAD mosaic")
 
-        edev = emad(data, gm, num_threads=self.num_threads)
+        edev = -np.log(emad(data, gm, num_threads=self.num_threads))
 
         LOG.info("Computing Bray-Curtis distance MAD mosaic")
 
-        bcdev = bcmad(data, gm, num_threads=self.num_threads)
+        bcdev = -np.log(bcmad(data, gm, num_threads=self.num_threads))
 
         LOG.info("Stacking results")
 
