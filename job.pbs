@@ -23,8 +23,6 @@ echo "Cythonizing code"
 cythonize model/fast.pyx
 
 echo "Compiling code"
-export NCI_GXX_ABI_WARNING=1
-module load gcc/6.2.0
 gcc -shared -pthread -fopenmp -fPIC -O3 -fno-strict-aliasing \
 	-I$(python3 -c 'import numpy; print(numpy.get_include())') \
 	$(python3-config --includes) -Wno-cpp model/fast.c \
